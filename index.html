@@ -179,38 +179,47 @@ let appStorage = null;
 
 function getBestStorage(){
   if(appStorage) return appStorage;
-  try{
-    if(window.localStorage){
+  const storages = [];
+  if(window.localStorage) storages.push(window.localStorage);
+  if(window.sessionStorage) storages.push(window.sessionStorage);
+  for(const storage of storages){
+    try{
       const testKey='__asf_storage_test__';
-      window.localStorage.setItem(testKey, '1');
-      window.localStorage.removeItem(testKey);
-      appStorage = window.localStorage;
-      return appStorage;
-    }
-  }catch(e){}
-  try{
-    if(window.sessionStorage){
-      const testKey='__asf_storage_test__';
-      window.sessionStorage.setItem(testKey, '1');
-      window.sessionStorage.removeItem(testKey);
-      appStorage = window.sessionStorage;
-      return appStorage;
-    }
-  }catch(e){}
+      storage.setItem(testKey, '1');
+      storage.removeItem(testKey);
+      appStorage = storage;
+      return storage;
+    }catch(e){}
+  }
   return null;
 }
 
+function getAllStorages(){
+  const storages = [];
+  if(window.localStorage) storages.push(window.localStorage);
+  if(window.sessionStorage) storages.push(window.sessionStorage);
+  return storages;
+}
+
 function readStoredValue(key){
-  const storage = getBestStorage();
-  if(!storage) return null;
-  try{return storage.getItem(key);}catch(e){return null;}
+  for(const storage of getAllStorages()){
+    try{
+      const value = storage.getItem(key);
+      if(value !== null && value !== undefined) return value;
+    }catch(e){}
+  }
+  return null;
 }
 
 function writeStoredValue(key, value){
-  const storage = getBestStorage();
-  if(!storage) return false;
-  try{ storage.setItem(key, value); return true; }
-  catch(e){ return false; }
+  let wrote = false;
+  for(const storage of getAllStorages()){
+    try{
+      storage.setItem(key, value);
+      wrote = true;
+    }catch(e){}
+  }
+  return wrote;
 }
 
 let champPresets=[
@@ -713,6 +722,7 @@ function loadState(){
 setTimeout(()=>{ renderPresetSelects(); refreshAllPreviews(); }, 60);
 
 window.addEventListener('beforeunload', ()=>{ try{ saveState(); }catch(e){} });
+window.addEventListener('pagehide', ()=>{ try{ saveState(); }catch(e){} });
 
 // progress timer implementation
 let progressTimerId=null;
