@@ -228,9 +228,10 @@ function addStatRow(primary=false){
     <span class="tag">objectif</span>
       <input type="text" class="txt stargetNum" placeholder="ex: 100">
       <select class="suf-select stargetSuf">${suffixOptions("Qd")}</select>
-    <button class="del" onclick="{document.getElementById('${id}').remove(); refreshAllPreviews();}">✕</button>`;
+    <button class="del" onclick="{document.getElementById('${id}').remove(); refreshAllPreviews(); saveStateDebounced();}">✕</button>`;
   document.getElementById("statsList").appendChild(div);
   updateGainPreview(div);
+  saveStateDebounced();
 }
 
 function zoneOptions(statName){
@@ -283,8 +284,9 @@ function addBoostRow(){
     <span class="tag bmultlabel">multiplicateur</span><input type="number" class="txt bmult" value="2" step="0.01" style="width:70px">
     <span class="tag bfriendlabel" style="display:none">nb amis</span><input type="number" class="txt bfriend" value="1" step="1" style="width:60px;display:none">
     <span class="tag bdurlabel">durée (min)</span><input type="number" class="txt bdur" value="60" step="1" style="width:80px">
-    <button class="del" onclick="document.getElementById('${id}').remove(); refreshAllPreviews();">✕</button>`;
+    <button class="del" onclick="{document.getElementById('${id}').remove(); refreshAllPreviews(); saveStateDebounced();}">✕</button>`;
   document.getElementById("boostsList").appendChild(div);
+  saveStateDebounced();
 }
 
 function updateBoostRow(id){
@@ -301,6 +303,7 @@ function updateBoostRow(id){
   else if(type==="server"){ multInput.value=1.25; durInput.value=60; multInput.style.display=""; multLabel.style.display=""; friendInput.style.display="none"; friendLabel.style.display="none"; multInput.disabled=false; durInput.disabled=false; }
   else if(type==="stat"){ multInput.value=1.5; durInput.value=15; multInput.style.display=""; multLabel.style.display=""; friendInput.style.display="none"; friendLabel.style.display="none"; multInput.disabled=false; durInput.disabled=false; }
   else { multInput.disabled=false; multInput.style.display=""; multLabel.style.display=""; friendInput.style.display="none"; friendLabel.style.display="none"; durInput.disabled=false;}
+  saveStateDebounced();
 }
 
 function addChampRow(){
@@ -314,8 +317,9 @@ function addChampRow(){
     <select class="cname">${statOptions(STAT_NAMES[(champCount-1)%6])}</select>
     <span class="tag">(appliquera le % du preset)</span>
     <button class="ghost" style="width:auto;padding:6px 10px" onclick="applyPresetPreview('${id}')">Aperçu</button>
-    <button class="del" onclick="document.getElementById('${id}').remove()">✕</button>`;
+    <button class="del" onclick="{document.getElementById('${id}').remove(); saveStateDebounced();}">✕</button>`;
   document.getElementById("champList").appendChild(div);
+  saveStateDebounced();
 }
 
 function renderPresetOptions(selected){
@@ -344,6 +348,7 @@ function saveNewPreset(){
   // remove form and re-render
   let f=document.getElementById('presetForm'); if(f) f.remove();
   renderPresets();
+  saveStateDebounced();
 }
 
 function renderPresets(){
@@ -383,6 +388,7 @@ function saveEditedPreset(oldName){
   });
   document.getElementById('presetForm').remove();
   renderPresets();
+  saveStateDebounced();
 }
 
 function deletePreset(name){
@@ -390,6 +396,7 @@ function deletePreset(name){
   champPresets=champPresets.filter(p=>p.name!==name);
   document.querySelectorAll('.presetSelect').forEach(sel=>{ sel.innerHTML=renderPresetOptions(sel.value);} );
   renderPresets();
+  saveStateDebounced();
 }
 
 function applyPresetPreview(entryId){
@@ -400,15 +407,139 @@ function applyPresetPreview(entryId){
   alert(`Preset ${presetName} => ${stat}: ${pct}% (appliqué toutes les 5s)`);
 }
 
-addStatRow(true);
+let saveTimer=null;
+const STORAGE_KEY='asfCalculatorState';
+
+function getState(){
+  return {
+    stats:Array.from(document.querySelectorAll('#statsList .entry')).map((r)=>({
+      name:r.querySelector('.sname')?.value||STAT_NAMES[0],
+      mode:r.querySelector('.modeSelect')?.value||'auto',
+      zone:r.querySelector('.zoneSelect')?.value||'',
+      statMul:r.querySelector('.statMulSelect')?.value||'1',
+      gamepass:!!r.querySelector('.gamepass')?.checked,
+      clan:!!r.querySelector('.clan')?.checked,
+      heavy:!!r.querySelector('.heavy')?.checked,
+      stick:r.querySelector('.stick')?.value||'1',
+      sgainNum:r.querySelector('.sgainNum')?.value||'',
+      sgainSuf:r.querySelector('.sgainSuf')?.value||'',
+      scurNum:r.querySelector('.scurNum')?.value||'',
+      scurSuf:r.querySelector('.scurSuf')?.value||'',
+      stargetNum:r.querySelector('.stargetNum')?.value||'',
+      stargetSuf:r.querySelector('.stargetSuf')?.value||''
+    })),
+    boosts:Array.from(document.querySelectorAll('#boostsList .entry')).map((r)=>({
+      type:r.querySelector('.btype')?.value||'admin',
+      mult:r.querySelector('.bmult')?.value||'1',
+      friend:r.querySelector('.bfriend')?.value||'1',
+      dur:r.querySelector('.bdur')?.value||'60'
+    })),
+    champs:Array.from(document.querySelectorAll('#champList .entry')).map((r)=>({
+      preset:r.querySelector('.presetSelect')?.value||'',
+      name:r.querySelector('.cname')?.value||STAT_NAMES[0]
+    })),
+    presets: champPresets,
+    primaryIndex: Array.from(document.querySelectorAll('#statsList .entry')).indexOf(
+      document.querySelector('input[name="primary"]:checked')?.closest('.entry')
+    )
+  };
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(getState()));
+  }catch(e){
+    console.warn('Impossible de sauvegarder localStorage', e);
+  }
+}
+
+function saveStateDebounced(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(saveState, 120);
+}
+
+function loadState(){
+  let raw=localStorage.getItem(STORAGE_KEY);
+  if(!raw) return false;
+  let data;
+  try{ data=JSON.parse(raw); }catch(e){ console.warn('Données localStorage invalides', e); return false; }
+  if(!data) return false;
+  document.getElementById('statsList').innerHTML='';
+  document.getElementById('boostsList').innerHTML='';
+  document.getElementById('champList').innerHTML='';
+  statCount=0; boostCount=0; champCount=0;
+  champPresets = Array.isArray(data.presets) ? data.presets : [];
+  if(Array.isArray(data.stats) && data.stats.length){
+    data.stats.forEach((s,i)=>{
+      addStatRow(i===0);
+      let row=document.getElementById('s'+statCount);
+      if(!row) return;
+      row.querySelector('.sname').value=s.name||STAT_NAMES[0];
+      row.querySelector('.modeSelect').value=s.mode||'auto';
+      row.querySelector('.zoneSelect').value=s.zone||'';
+      row.querySelector('.statMulSelect').value=s.statMul||'1';
+      row.querySelector('.gamepass').checked=!!s.gamepass;
+      row.querySelector('.clan').checked=!!s.clan;
+      row.querySelector('.heavy').checked=!!s.heavy;
+      row.querySelector('.stick').value=s.stick||'1';
+      row.querySelector('.sgainNum').value=s.sgainNum||'';
+      row.querySelector('.sgainSuf').value=s.sgainSuf||'';
+      row.querySelector('.scurNum').value=s.scurNum||'';
+      row.querySelector('.scurSuf').value=s.scurSuf||'';
+      row.querySelector('.stargetNum').value=s.stargetNum||'';
+      row.querySelector('.stargetSuf').value=s.stargetSuf||'';
+      onModeChange(row.querySelector('.modeSelect'));
+      updateGainPreview(row);
+    });
+  } else {
+    addStatRow(true);
+  }
+  if(Array.isArray(data.boosts)){
+    data.boosts.forEach((b)=>{
+      addBoostRow();
+      let row=document.getElementById('b'+boostCount);
+      if(!row) return;
+      row.querySelector('.btype').value=b.type||'admin';
+      row.querySelector('.bmult').value=b.mult||'1';
+      row.querySelector('.bfriend').value=b.friend||'1';
+      row.querySelector('.bdur').value=b.dur||'60';
+      updateBoostRow(row.id);
+    });
+  }
+  if(Array.isArray(data.champs)){
+    data.champs.forEach((c)=>{
+      addChampRow();
+      let row=document.getElementById('c'+champCount);
+      if(!row) return;
+      row.querySelector('.presetSelect').value=c.preset||'';
+      row.querySelector('.cname').value=c.name||STAT_NAMES[0];
+    });
+  }
+  renderPresets();
+  renderPresetSelects();
+  if(typeof data.primaryIndex==='number' && data.primaryIndex>=0){
+    let primaryRow=document.querySelectorAll('#statsList .entry')[data.primaryIndex];
+    if(primaryRow) primaryRow.querySelector('input[name="primary"]').checked=true;
+  }
+  refreshAllPreviews();
+  return true;
+}
+
+if(!loadState()){
+  addStatRow(true);
+}
 renderPresets();
 
-// live previews on change, without persisting anything
-  document.getElementById('statsList').addEventListener('input', (e)=>{ let row=e.target.closest('.entry'); if(row) updateGainPreview(row); });
-document.getElementById('statsList').addEventListener('change', (e)=>{ let row=e.target.closest('.entry'); if(row) updateGainPreview(row); });
-  document.getElementById('boostsList').addEventListener('input', ()=>{ refreshAllPreviews(); });
-  document.getElementById('boostsList').addEventListener('change', ()=>{ refreshAllPreviews(); });
-document.getElementById('presetsList').addEventListener('input', ()=>{ renderPresetSelects(); });
+window.addEventListener('beforeunload', saveState);
+
+document.getElementById('statsList').addEventListener('input', (e)=>{ let row=e.target.closest('.entry'); if(row) updateGainPreview(row); saveStateDebounced(); });
+document.getElementById('statsList').addEventListener('change', (e)=>{ let row=e.target.closest('.entry'); if(row) updateGainPreview(row); saveStateDebounced(); });
+document.getElementById('boostsList').addEventListener('input', ()=>{ refreshAllPreviews(); saveStateDebounced(); });
+document.getElementById('boostsList').addEventListener('change', ()=>{ refreshAllPreviews(); saveStateDebounced(); });
+document.getElementById('champList').addEventListener('input', saveStateDebounced);
+document.getElementById('champList').addEventListener('change', saveStateDebounced);
+document.getElementById('presetsList').addEventListener('input', saveStateDebounced);
+document.body.addEventListener('click', (e)=>{ if(e.target.closest('button.del')) saveStateDebounced(); });
 
 function calculer(){
   const champInt=5; // intervalle fixe
