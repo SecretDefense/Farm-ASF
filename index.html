@@ -6,60 +6,94 @@
 <title>ASF Calculator</title>
 <style>
 :root{
-  --bg:#080a12;
-  --bg-alt:#101624;
-  --card:#131a28;
-  --card2:#18213b;
-  --border:rgba(255,255,255,.08);
-  --text:#e9f1ff;
-  --muted:#95a4c7;
-  --accent:#7b9cff;
-  --accent2:#5c7ef2;
+  --bg:#071023;
+  --bg-alt:#0f1630;
+  --card:#0f1626;
+  --card2:#17223b;
+  --border:rgba(255,255,255,.06);
+  --text:#e8f2ff;
+  --muted:#97a6d6;
+  --accent:#7fb0ff;
+  --accent2:#6a8ef8;
   --good:#6bd890;
   --warn:#f5a23c;
   --danger:#f26e73;
-  --shadow:0 28px 80px rgba(0,0,0,.35);
+  --shadow:0 20px 60px rgba(10,15,30,.5);
+  --glass: rgba(255,255,255,0.03);
+  --glass-2: rgba(255,255,255,0.02);
 }
 *{box-sizing:border-box}
-html{background:#070911}
-body{font-family:'Segoe UI',Arial,sans-serif;background:radial-gradient(circle at top left, rgba(123,156,255,.08), transparent 25%), radial-gradient(circle at 90% 0%, rgba(94,136,255,.06), transparent 16%), var(--bg);color:var(--text);width:100%;max-width:960px;margin:0 auto;padding:28px 18px 68px;position:relative;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%, rgba(123,156,255,.12), transparent 22%), radial-gradient(circle at 80% 10%, rgba(104,182,255,.08), transparent 18%);pointer-events:none;z-index:-1}
-h1{font-size:32px;font-weight:800;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
-.subtitle{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:26px;max-width:760px}
+html{background:var(--bg)}
+body{font-family:Inter, 'Segoe UI', Arial, sans-serif;background:radial-gradient(1200px 600px at 10% 10%, rgba(106,140,255,.06), transparent 18%), radial-gradient(800px 400px at 90% 5%, rgba(90,130,255,.04), transparent 12%), var(--bg);color:var(--text);width:100%;max-width:1100px;margin:0 auto;padding:36px 22px 80px;position:relative;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%, rgba(123,156,255,.10), transparent 22%), radial-gradient(circle at 80% 10%, rgba(104,182,255,.06), transparent 18%);pointer-events:none;z-index:-1}
+h1{font-size:36px;font-weight:800;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
+.subtitle{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:16px;max-width:820px}
 h2{font-size:13px;font-weight:800;margin:0 0 16px;display:flex;align-items:center;gap:10px;color:var(--text);text-transform:uppercase;letter-spacing:.1em}
-.card{background:rgba(15,20,35,.95);border:1px solid var(--border);border-radius:24px;padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card{background:linear-gradient(180deg,var(--card), var(--card2));border:1px solid var(--border);border-radius:20px;padding:22px 22px;margin-bottom:18px;box-shadow:var(--shadow);backdrop-filter:blur(6px)}
 .rowline{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:14px}
 label{font-size:13px;color:var(--muted);min-width:140px}
-input,select{background:rgba(20,29,48,.98);color:var(--text);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:11px 14px;font-size:13px;outline:none;transition:all .18s;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
-input:focus,select:focus{border-color:rgba(123,156,255,.65);box-shadow:0 0 0 0 rgba(123,156,255,.15)}
+  input,select{background:linear-gradient(180deg,var(--card2), var(--card));color:var(--text);border:1px solid rgba(255,255,255,.04);border-radius:12px;padding:10px 12px;font-size:13px;outline:none;transition:all .18s;box-shadow:inset 0 -1px 0 rgba(255,255,255,.02)}
+input:focus,select:focus{border-color:rgba(127,176,255,.9);box-shadow:0 6px 30px rgba(90,120,230,.08)}
 input[type=number]{width:110px}
 input.txt{width:130px}
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
 input[type=number]{ -moz-appearance:textfield; -webkit-appearance:textfield; appearance:textfield; }
-.entry{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:rgba(16,22,37,.96);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px 16px;margin-bottom:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
-.entry .tag{font-size:11px;color:var(--muted);min-width:auto;background:rgba(255,255,255,.04);padding:6px 10px;border-radius:999px}
-button{background:linear-gradient(135deg, var(--accent), var(--accent2));color:#fff;border:none;padding:12px 18px;border-radius:16px;cursor:pointer;font-size:13px;font-weight:700;transition:transform .15s,filter .15s,box-shadow .15s;box-shadow:0 16px 40px rgba(37,56,114,.24)}
-button:hover{filter:brightness(1.06);transform:translateY(-1px)}
-button.ghost{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);padding:11px 16px}
-button.ghost:hover{background:rgba(255,255,255,.08)}
-button.del{background:rgba(242,110,115,.08);border:1px solid rgba(242,110,115,.18);color:var(--danger);padding:8px 12px;font-size:12px}
-button.del:hover{background:rgba(242,110,115,.14)}
+.entry{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,.04);border-radius:18px;padding:14px 14px;margin-bottom:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}
+.entry .tag{font-size:11px;color:var(--muted);min-width:auto;background:rgba(255,255,255,.02);padding:6px 10px;border-radius:999px}
+button{background:linear-gradient(135deg, var(--accent), var(--accent2));color:#ffffff;border:none;padding:12px 18px;border-radius:14px;cursor:pointer;font-size:13px;font-weight:700;transition:transform .15s,filter .15s,box-shadow .15s;box-shadow:0 10px 30px rgba(37,56,114,.18)}
+button:hover{filter:brightness(1.06);transform:translateY(-2px)}
+button.ghost{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04);color:var(--text);padding:11px 16px}
+button.ghost:hover{background:rgba(255,255,255,.06)}
+button.del{background:rgba(242,110,115,.06);border:1px solid rgba(242,110,115,.14);color:var(--danger);padding:8px 12px;font-size:12px}
+button.del:hover{background:rgba(242,110,115,.12)}
 .mainbtn{width:100%;padding:16px;font-size:15px;margin-top:10px;letter-spacing:.03em;text-transform:uppercase}
 #result{display:none}
-.big{font-size:28px;color:var(--good);font-weight:800;margin-bottom:10px;text-shadow:0 0 18px rgba(107,216,144,.24)}
+.big{font-size:28px;color:var(--good);font-weight:800;margin-bottom:10px;text-shadow:0 0 20px rgba(107,216,144,.18)}
 .hint{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.7}
-.statfinal{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
+.statfinal{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
 .statfinal:last-child{border-bottom:none}
 .radio{accent-color:var(--accent)}
 select.preset{width:180px}
 .smallnote{color:var(--muted);font-size:12px;margin-top:-2px;margin-bottom:14px;line-height:1.5}
-.suf-select{width:100px;background:rgba(20,29,48,.98);color:var(--text);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:11px 12px;font-size:13px;margin-left:6px}
-.progress-track{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:999px;overflow:hidden;height:14px}
-.progress-fill{height:14px;background:linear-gradient(90deg, rgba(123,156,255,1), rgba(92,126,242,1));width:0%;transition:width .2s ease}
+.suf-select{width:100px;background:linear-gradient(180deg,var(--card2),var(--card));color:var(--text);border:1px solid rgba(255,255,255,.04);border-radius:12px;padding:10px 12px;font-size:13px;margin-left:6px}
+.progress-track{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04);border-radius:999px;overflow:hidden;height:14px}
+.progress-fill{height:14px;background:linear-gradient(90deg, rgba(127,176,255,1), rgba(106,142,255,1));width:0%;transition:width .2s ease}
 .gain-preview{margin-left:auto;text-align:right;color:var(--muted);font-size:13px}
 .gain-preview strong{color:var(--text);font-weight:700}
-.stats-card{border-left:4px solid rgba(123,156,255,.18);padding:20px 22px 18px}
+.stats-card{border-left:4px solid rgba(127,176,255,.12);padding:20px 22px 18px}
+
+/* Toolbar */
+.top-toolbar{display:flex;gap:10px;align-items:center;margin:12px 0 18px}
+.tool-btn{background:transparent;border:1px solid rgba(255,255,255,.04);color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer;font-weight:700;display:inline-flex;gap:8px;align-items:center}
+.tool-btn:hover{background:rgba(255,255,255,.02);transform:translateY(-2px)}
+.accent-btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:#fff;padding:10px 14px;border-radius:14px}
+
+/* entry polish */
+.entry{transition:transform .18s,box-shadow .18s;border-radius:16px}
+.entry:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(20,30,60,.35)}
+
+/* subtle icons */
+.icon{opacity:.95}
+
+/* multiplier toggles */
+.mult-toggle{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,.03);cursor:pointer;transition:all .12s ease}
+.mult-toggle input{display:none}
+.mult-toggle .label{font-size:13px;color:var(--muted)}
+.mult-toggle.active{background:linear-gradient(90deg, rgba(127,176,255,0.12), rgba(106,142,255,0.10));border:1px solid rgba(127,176,255,0.12);color:var(--text);box-shadow:0 6px 18px rgba(90,120,230,0.06)}
+.mult-toggle.active .label{color:var(--text)}
+.mult-badge{background:rgba(255,255,255,.03);padding:6px 8px;border-radius:10px;font-weight:700;color:var(--text);margin-left:8px}
+
+/* settings panel animation */
+.settings-panel{max-height:0;overflow:hidden;opacity:0;transition:max-height .28s ease,opacity .18s ease;padding-top:0}
+.settings-panel.open{max-height:420px;opacity:1;padding-top:10px}
+
+/* themed native-looking select wrapper */
+/* Make native selects follow theme color (dropdown rendering may vary by browser) */
+select, select option { background: var(--card2); color: var(--text); }
+select { -webkit-appearance: menulist; appearance: menulist; }
+
+
 
 /* Responsive adjustments */
 @media (max-width: 760px){
@@ -80,7 +114,6 @@ select.preset{width:180px}
   .statfinal{flex-direction:column;align-items:flex-start;gap:8px}
   .big{font-size:24px}
 }
-
 @media (min-width: 761px) and (max-width: 920px){
   .entry .tag{min-width:80px}
   label{min-width:100px}
@@ -91,6 +124,10 @@ select.preset{width:180px}
 
 <h1>Calculateur de temps de farm</h1>
 <p class="subtitle">Valeurs acceptées avec suffixes : K M B T Qd Qn Sx Sp Oc No Dc (ex : 10qd = 10e15, 2.5Sx = 2.5e21)</p>
+
+<div class="top-toolbar">
+  <!-- toolbar simplified: refresh presets removed -->
+</div>
 
 <div class="card stats-card">
 <h2>📊 Stats farmées</h2>
@@ -108,9 +145,8 @@ select.preset{width:180px}
 <div class="card">
 <h2>🧙 Champion</h2>
 <p class="smallnote">Le champion applique des assists toutes les 5 secondes. Créez des presets de champion (pourcentages par stat), puis appliquez un preset à une stat.</p>
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
   <button class="ghost" onclick="showAddPreset()">+ Nouveau preset</button>
-  <button class="ghost" onclick="renderPresets()">Rafraîchir presets</button>
 </div>
 <div id="presetsList"></div>
 <h3 style="margin-top:12px;font-size:14px;color:var(--muted)">Appliquer un preset à une stat</h3>
@@ -195,44 +231,80 @@ function suffixOptions(sel){
 
 function addStatRow(primary=false){
   statCount++;
-  let id="s"+statCount;
-  let div=document.createElement("div");
-  div.className="entry"; div.id=id;
-  div.innerHTML=`
-    <input type="radio" class="radio" name="primary" value="${id}" ${primary?"checked":""} title="Stat cible">
-    <select class="sname">${statOptions(STAT_NAMES[(statCount-1)%6])}</select>
-    <div style="margin-left:auto;display:flex;gap:8px">
-      <select class="modeSelect" onchange="onModeChange(this)">
-        <option value="auto">Auto</option>
-        <option value="manual">Manual</option>
-      </select>
+  let id = "s"+statCount;
+  let div = document.createElement("div");
+  div.className = "entry"; div.id = id;
+  div.innerHTML = `
+    <div class="row-main" style="width:100%;display:flex;align-items:center;gap:10px">
+      <input type="checkbox" class="primaryChk" value="${id}" ${primary?"checked":""} title="Sélection multiple">
+      <select class="sname">${statOptions(STAT_NAMES[(statCount-1)%6])}</select>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="gain-preview" style="margin:0 8px 0 0">Gain/tick: <strong class="gainTickVal">—</strong></div>
+        <button class="tool-btn" onclick="toggleSettings('${id}')" title="Afficher options">⚙️</button>
+        <button class="del" onclick="{document.getElementById('${id}').remove(); refreshAllPreviews(); saveStateDebounced();}">✕</button>
+      </div>
     </div>
-    <div class="mode-auto" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-      <span class="tag">zone</span>
-      <select class="suf-select zoneSelect" style="width:120px">${zoneOptions(STAT_NAMES[(statCount-1)%6])}</select>
-      <select class="suf-select statMulSelect" style="width:120px">${statMulOptions()}</select>
-    </div>
-    <div class="mode-manual" style="display:none;flex-wrap:wrap;gap:8px;align-items:center">
-      <span class="tag">gain/tick</span>
-      <input type="text" class="txt sgainNum" placeholder="ex: 500">
-      <select class="suf-select sgainSuf">${suffixOptions("")}</select>
-    </div>
-      <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="gamepass"> x2 GP</label>
-      <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="clan"> x1.2 Clan</label>
-      <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="heavy" title="Only for Agility/Speed"> Heavy x35</label>
-    <span class="tag">tick</span><input type="number" class="txt stick" value="1" step="0.01" style="width:70px">
-    <div class="gain-preview">Gain/tick: <strong class="gainTickVal">—</strong></div>
-    <span class="tag">actuel</span>
-      <input type="text" class="txt scurNum" placeholder="ex: 10">
-      <select class="suf-select scurSuf">${suffixOptions("Qd")}</select>
-    <span class="tag">objectif</span>
-      <input type="text" class="txt stargetNum" placeholder="ex: 100">
-      <select class="suf-select stargetSuf">${suffixOptions("Qd")}</select>
-    <button class="del" onclick="{document.getElementById('${id}').remove(); refreshAllPreviews(); saveStateDebounced();}">✕</button>`;
+    <div class="settings-panel">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <label style="display:flex;align-items:center;gap:6px">Mode
+          <select class="modeSelect" onchange="onModeChange(this)">
+            <option value="auto">Auto</option>
+            <option value="manual">Manual</option>
+          </select>
+        </label>
+        <div class="mode-auto" style="display:flex;gap:8px;align-items:center">
+          <span class="tag">zone</span>
+          <select class="suf-select zoneSelect" style="width:140px">${zoneOptions(STAT_NAMES[(statCount-1)%6])}</select>
+          <select class="suf-select statMulSelect" style="width:120px">${statMulOptions()}</select>
+        </div>
+        <div class="mode-manual" style="display:none;gap:8px;align-items:center">
+          <span class="tag">gain/tick</span>
+          <input type="text" class="txt sgainNum" placeholder="ex: 500">
+          <select class="suf-select sgainSuf">${suffixOptions("")}</select>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <label class="mult-toggle" title="Gamepass x2">
+          <input type="checkbox" class="gamepass">
+          <span class="label">GP</span><span class="label">x2</span>
+        </label>
+        <label class="mult-toggle" title="Clan x1.2">
+          <input type="checkbox" class="clan">
+          <span class="label">Clan</span><span class="label">x1.2</span>
+        </label>
+        <label class="mult-toggle" title="Heavy x35">
+          <input type="checkbox" class="heavy">
+          <span class="label">Heavy</span><span class="label">x35</span>
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:6px"><span class="tag">tick</span><input type="number" class="txt stick" value="1" step="0.01" style="width:90px"></label>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <label style="display:flex;align-items:center;gap:6px">Actuel <input type="text" class="txt scurNum" placeholder="ex: 10" style="width:130px"></label>
+          <select class="suf-select scurSuf">${suffixOptions("Qd")}</select>
+          <label style="display:flex;align-items:center;gap:6px">Objectif <input type="text" class="txt stargetNum" placeholder="ex: 100" style="width:130px"></label>
+          <select class="suf-select stargetSuf">${suffixOptions("Qd")}</select>
+        </div>
+      </div>
+    </div>`;
   document.getElementById("statsList").appendChild(div);
   updateGainPreview(div);
+  // no custom dropdowns — use native selects styled darker
   saveStateDebounced();
 }
+
+function toggleSettings(id){
+  let el = document.getElementById(id);
+  if(!el) return;
+  let panel = el.querySelector('.settings-panel');
+  if(!panel) return;
+  panel.classList.toggle('open');
+  // ensure preview updates when opening
+  if(panel.classList.contains('open')) updateGainPreview(el);
+}
+
+// themed wrapper removed — native selects used with themed colors
+
+// --- custom select implementation ---
+// native selects are used; no custom-select logic required
 
 function zoneOptions(statName){
   let arr = (statName==='Agility' || statName==='Speed') ? ZONES_AGI : (statName==='Sword' ? ZONES_SWORD : ZONES_COMMON);
@@ -439,9 +511,7 @@ function getState(){
       name:r.querySelector('.cname')?.value||STAT_NAMES[0]
     })),
     presets: champPresets,
-    primaryIndex: Array.from(document.querySelectorAll('#statsList .entry')).indexOf(
-      document.querySelector('input[name="primary"]:checked')?.closest('.entry')
-    )
+    primarySelected: Array.from(document.querySelectorAll('#statsList .entry')).filter(r=> !!r.querySelector('.primaryChk')?.checked).map(r=>r.id)
   };
 }
 
@@ -457,6 +527,10 @@ function saveStateDebounced(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(saveState, 120);
 }
+
+// export/import functions removed per user preference
+
+// resetState removed — reset button removed from UI
 
 function loadState(){
   let raw=localStorage.getItem(STORAGE_KEY);
@@ -517,9 +591,11 @@ function loadState(){
   }
   renderPresets();
   renderPresetSelects();
-  if(typeof data.primaryIndex==='number' && data.primaryIndex>=0){
-    let primaryRow=document.querySelectorAll('#statsList .entry')[data.primaryIndex];
-    if(primaryRow) primaryRow.querySelector('input[name="primary"]').checked=true;
+  if(Array.isArray(data.primarySelected)){
+    data.primarySelected.forEach(id=>{
+      let row = document.getElementById(id);
+      if(row){ let chk = row.querySelector('.primaryChk'); if(chk) chk.checked = true; }
+    });
   }
   refreshAllPreviews();
   return true;
@@ -533,7 +609,24 @@ renderPresets();
 window.addEventListener('beforeunload', saveState);
 
 document.getElementById('statsList').addEventListener('input', (e)=>{ let row=e.target.closest('.entry'); if(row) updateGainPreview(row); saveStateDebounced(); });
-document.getElementById('statsList').addEventListener('change', (e)=>{ let row=e.target.closest('.entry'); if(row) updateGainPreview(row); saveStateDebounced(); });
+document.getElementById('statsList').addEventListener('change', (e)=>{
+  let row = e.target.closest('.entry');
+  if(!row){ saveStateDebounced(); return; }
+  // if stat name changed, refresh the zone options for that row
+  if(e.target.classList && e.target.classList.contains('sname')){
+    let zoneSel = row.querySelector('.zoneSelect');
+    if(zoneSel){
+      let prev = zoneSel.value || '';
+      zoneSel.innerHTML = zoneOptions(e.target.value);
+      if(Array.from(zoneSel.options).some(o=>o.value===prev)) zoneSel.value = prev; else zoneSel.value='';
+    }
+  }
+  if(e.target.classList && e.target.classList.contains('modeSelect')){
+    onModeChange(e.target);
+  }
+  updateGainPreview(row);
+  saveStateDebounced();
+});
 document.getElementById('boostsList').addEventListener('input', ()=>{ refreshAllPreviews(); saveStateDebounced(); });
 document.getElementById('boostsList').addEventListener('change', ()=>{ refreshAllPreviews(); saveStateDebounced(); });
 document.getElementById('champList').addEventListener('input', saveStateDebounced);
@@ -598,10 +691,8 @@ function calculer(){
     };
   });
 
-  let primaryRadio=document.querySelector('input[name="primary"]:checked');
-  if(!primaryRadio){ alert("Sélectionne une stat cible (bouton radio)."); return; }
-  let primary=stats.find(s=>s.id===primaryRadio.value);
-  if(!primary || primary.gain<=0){ alert("La stat cible doit avoir un gain/tick > 0."); return; }
+  let selectedIds = Array.from(document.querySelectorAll('.primaryChk:checked')).map(c=>c.value);
+  if(selectedIds.length===0){ alert("Sélectionne au moins une stat cible (case à cocher)."); return; }
 
   function multAt(t){
     let m=1;
@@ -619,94 +710,102 @@ function calculer(){
     return base + champ;
   }
 
-  let remaining=primary.target-primary.cur;
-  if(remaining<=0){
-    document.getElementById("result").style.display="block";
-    document.getElementById("result").innerHTML="<div class='big'>Objectif déjà atteint !</div>";
-    return;
-  }
-
-  let tAccum=0, prevT=0, finalTime=null;
-  for(const evt of events){
-    let dur=evt-prevT;
-    let r=rateFor(primary, prevT+0.0001);
-    if(r<=0){ prevT=evt; continue; }
-    let amountThis = isFinite(dur) ? r*dur : Infinity;
-    if(remaining<=amountThis){
-      tAccum+=remaining/r;
-      finalTime=tAccum;
-      break;
-    } else {
-      remaining-=amountThis;
-      tAccum+=dur;
+  function computeTimeFor(stat){
+    let remaining = stat.target - stat.cur;
+    if(remaining<=0) return 0;
+    let tAccum=0, prevT=0, finalTime=null;
+    for(const evt of events){
+      let dur = evt - prevT;
+      let r = rateFor(stat, prevT+0.0001);
+      if(r<=0){ prevT = evt; continue; }
+      let amountThis = isFinite(dur) ? r*dur : Infinity;
+      if(remaining <= amountThis){
+        tAccum += remaining / r;
+        finalTime = tAccum;
+        break;
+      } else {
+        remaining -= amountThis;
+        tAccum += dur;
+      }
+      prevT = evt;
     }
-    prevT=evt;
+    return finalTime;
   }
-  if(finalTime===null){
+
+  if(selectedIds.length===0){ alert("Sélectionne au moins une stat cible (cases)."); return; }
+
+  if(selectedIds.length===1){
+    let primary = stats.find(s=>s.id===selectedIds[0]);
+    if(!primary || primary.gain<=0){ alert("La stat cible doit avoir un gain/tick > 0."); return; }
+    let finalTime = computeTimeFor(primary);
+    if(finalTime===null){
+      document.getElementById("result").style.display="block";
+      document.getElementById("result").innerHTML="<div class='big' style='color:var(--warn)'>Impossible d'atteindre l'objectif avec ces taux.</div>";
+      return;
+    }
+    let detailsHTML=stats.map(s=>{
+      if(s.gain<=0) return `<div class="statfinal"><span>${s.name}</span><span>${fmtNum(s.cur)} (pas de gain)</span></div>`;
+      let acc=s.cur, prev=0;
+      for(const evt of events){
+        let segEnd=Math.min(evt, finalTime);
+        let dur=segEnd-prev;
+        if(dur>0) acc+=rateFor(s, prev+0.0001)*dur;
+        prev=segEnd;
+        if(evt>=finalTime) break;
+      }
+      return `<div class="statfinal"><span>${s.name}${s.id===primary.id?" 🎯":""}</span><span>${fmtNum(acc)}</span></div>`;
+    }).join("");
+    let ticksInfo = stats.map(s=>({name:s.name,ticks: s.tick>0 ? Math.floor(finalTime / s.tick) : 0}));
+    let champEntriesPerStat = {};
+    document.querySelectorAll("#champList .entry").forEach(r=>{
+      let statName = r.querySelector('.cname').value;
+      champEntriesPerStat[statName] = (champEntriesPerStat[statName]||0) + 1;
+    });
+    let champProcsInfo = stats.map(s=>({name:s.name,procs: Math.floor(finalTime / champInt) * (champEntriesPerStat[s.name]||0)}));
+    let totalChampProcs = champProcsInfo.reduce((a,b)=>a+b.procs,0);
+    let finalMult = multAt(finalTime-1e-6);
+    let finalVals = stats.map(s=>{
+      let acc=s.cur, prev=0;
+      for(const evt of events){
+        let segEnd=Math.min(evt, finalTime);
+        let dur=segEnd-prev;
+        if(dur>0) acc+=rateFor(s, prev+0.0001)*dur;
+        prev=segEnd;
+        if(evt>=finalTime) break;
+      }
+      return {name:s.name,val:acc};
+    });
+    let primaryFinal = finalVals.find(v=>v.name===primary.name);
+    let realGain = (primaryFinal?primaryFinal.val:0) - primary.cur;
     document.getElementById("result").style.display="block";
-    document.getElementById("result").innerHTML="<div class='big' style='color:var(--warn)'>Impossible d'atteindre l'objectif avec ces taux.</div>";
+    document.getElementById("result").innerHTML=`
+      <div class="big">${fmtTime(finalTime)}</div>
+      <div style="display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap"><div class="hint">Durée totale: ${finalTime.toFixed(1)}s</div><div class="hint">Gain réel (cible): ${fmtNum(realGain)}</div><div class="hint">Multiplicateur final: x${finalMult.toFixed(3)}</div></div>
+      <div style="margin-bottom:12px"><div style="height:12px;background:var(--border);border-radius:8px;overflow:hidden"><div id="progressBar" style="height:12px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%"></div></div><div id="timerText" class="hint" style="margin-top:6px">--</div></div>
+      <div class="card" style="margin-bottom:0">
+        <h3 style="margin:6px 0">Temps détaillé & compteurs</h3>
+        <div style="font-size:13px">${detailsHTML}</div>
+        <div style="font-size:13px;margin-top:10px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px">
+          <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Ticks</span><span>${ticksInfo.map(t=>`${t.name}: ${t.ticks}`).join(' • ')}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Champion procs</span><span>${totalChampProcs} (${champProcsInfo.map(c=>`${c.name}:${c.procs}`).join(', ')})</span></div>
+        </div>
+      </div>
+      `;
+    startProgressTimer(finalTime);
     return;
   }
 
-  let detailsHTML=stats.map(s=>{
+  // multiple selected: compute simple times per selected stat and show list (no progress timer)
+  let listHTML = selectedIds.map(id=>{
+    let s = stats.find(x=>x.id===id);
+    if(!s) return '';
     if(s.gain<=0) return `<div class="statfinal"><span>${s.name}</span><span>${fmtNum(s.cur)} (pas de gain)</span></div>`;
-    let acc=s.cur, prev=0;
-    for(const evt of events){
-      let segEnd=Math.min(evt, finalTime);
-      let dur=segEnd-prev;
-      if(dur>0) acc+=rateFor(s, prev+0.0001)*dur;
-      prev=segEnd;
-      if(evt>=finalTime) break;
-    }
-    return `<div class="statfinal"><span>${s.name}${s.id===primary.id?" 🎯":""}</span><span>${fmtNum(acc)}</span></div>`;
-  }).join("");
-  // compute extra metrics
-  // ticks per stat (full ticks)
-  let ticksInfo = stats.map(s=>({name:s.name,ticks: s.tick>0 ? Math.floor(finalTime / s.tick) : 0}));
-  // champion procs per stat: count of champ entries targeting stat * floor(finalTime/champInt)
-  let champEntriesPerStat = {};
-  document.querySelectorAll("#champList .entry").forEach(r=>{
-    let statName = r.querySelector('.cname').value;
-    champEntriesPerStat[statName] = (champEntriesPerStat[statName]||0) + 1;
-  });
-  let champProcsInfo = stats.map(s=>({name:s.name,procs: Math.floor(finalTime / champInt) * (champEntriesPerStat[s.name]||0)}));
-  let totalChampProcs = champProcsInfo.reduce((a,b)=>a+b.procs,0);
-
-  // final multiplier at end
-  let finalMult = multAt(finalTime-1e-6);
-
-  // compute final values per stat again with per-segment integration (we have acc above in detailsHTML but recompute for display)
-  let finalVals = stats.map(s=>{
-    let acc=s.cur, prev=0;
-    for(const evt of events){
-      let segEnd=Math.min(evt, finalTime);
-      let dur=segEnd-prev;
-      if(dur>0) acc+=rateFor(s, prev+0.0001)*dur;
-      prev=segEnd;
-      if(evt>=finalTime) break;
-    }
-    return {name:s.name,val:acc};
-  });
-
-  // ticks and real gain for primary
-  let primaryFinal = finalVals.find(v=>v.name===primary.name);
-  let realGain = (primaryFinal?primaryFinal.val:0) - primary.cur;
-
-  // render result with progress bar and timer
+    let ft = computeTimeFor(s);
+    if(ft===null) return `<div class="statfinal"><span>${s.name}</span><span style="color:var(--warn)">Impossible</span></div>`;
+    return `<div class="statfinal"><span>${s.name}</span><span style="font-weight:700;color:var(--good)">${fmtTime(ft)}</span></div>`;
+  }).join('');
   document.getElementById("result").style.display="block";
-  document.getElementById("result").innerHTML=`
-    <div class="big">${fmtTime(finalTime)}</div>
-    <div style="display:flex;gap:10px;align-items:center;margin:8px 0"><div class="hint">Durée totale: ${finalTime.toFixed(1)}s</div><div class="hint">Gain réel (cible): ${fmtNum(realGain)}</div><div class="hint">Multiplicateur final: x${finalMult.toFixed(3)}</div></div>
-    <div style="margin-bottom:8px"><div style="height:12px;background:var(--border);border-radius:8px;overflow:hidden"><div id="progressBar" style="height:12px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%"></div></div><div id="timerText" class="hint" style="margin-top:6px">--</div></div>
-    <div class="card">
-      <h3 style="margin:6px 0">Temps détaillé & compteurs</h3>
-      <div style="font-size:13px">${ticksInfo.map(t=>`<div style="display:flex;justify-content:space-between;padding:4px 0"><span>${t.name}</span><span>${ticksInfo.find(x=>x.name===t.name).ticks} ticks</span></div>`).join('')}</div>
-      <div style="font-size:13px;margin-top:8px">Champion procs: ${totalChampProcs} (par stat: ${champProcsInfo.map(c=>c.name+':'+c.procs).join(', ')})</div>
-    </div>
-    `;
-
-  // start progress timer
-  startProgressTimer(finalTime);
+  document.getElementById("result").innerHTML = `<div class="big">Sélection multiple</div><div class="card"><h3 style="margin:6px 0">Temps par cible</h3>${listHTML}</div>`;
 }
 
 // no persistence; the page stays purely local in the current session
@@ -769,6 +868,25 @@ function updateGainPreview(r){
   let val = computeGainPreviewForRow(r);
   let el = r.querySelector('.gainTickVal');
   if(el) el.textContent = fmtNum(val);
+  // update multiplier badge
+  let mulSel = r.querySelector('.statMulSelect');
+  let badge = r.querySelector('.mult-badge');
+  if(!badge){
+    // create badge next to gainTickVal
+    let gp = r.querySelector('.gain-preview');
+    if(gp){ let b=document.createElement('span'); b.className='mult-badge'; gp.parentNode.insertBefore(b, gp.nextSibling); badge=b; }
+  }
+  if(badge){
+    let m = mulSel ? Number(mulSel.value || 1) : 1;
+    badge.textContent = 'x' + (m>=1000 ? fmtNum(m) : (m%1===0?m:m.toFixed(2)));
+  }
+  // update toggle visuals
+  ['gamepass','clan','heavy'].forEach(c=>{
+    let inp = r.querySelector('.'+c);
+    if(!inp) return;
+    let lab = inp.closest('.mult-toggle');
+    if(lab) lab.classList.toggle('active', !!inp.checked);
+  });
 }
 
 function refreshAllPreviews(){
