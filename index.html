@@ -181,11 +181,8 @@ let champPresets=[
   {name:'Sukuna (Specialist II)', pct:{Strength:1.12, Durability:0.93, Sword:1.00}}
 ]; // {name, pct: {StatName: percent}}
 
-// default boosts to create when no saved boosts exist
-const DEFAULT_BOOSTS = [
-  {btype:'server', bmult:'1.25', bdur:'60'},
-  {btype:'stat', bmult:'1.5', bdur:'15'}
-];
+// no default boosts; the page starts empty unless the user adds some
+const DEFAULT_BOOSTS = [];
 
 function statOptions(sel){
   return STAT_NAMES.map(n=>`<option value="${n}" ${n===sel?"selected":""}>${n}</option>`).join("");
@@ -408,7 +405,6 @@ function applyPresetPreview(entryId){
 }
 
 addStatRow(true);
-addBoostRow();
 // load saved state (presets + stats) if any
 loadState();
 renderPresets();
@@ -668,16 +664,8 @@ function loadState(){
         updateBoostRow(last.id);
       }
     } else {
-      // no saved boosts: create defaults
+      // no saved boosts: keep the list empty
       document.getElementById('boostsList').innerHTML=''; boostCount=0;
-      for(const db of DEFAULT_BOOSTS){
-        addBoostRow();
-        const last = document.querySelector('#boostsList .entry:last-child');
-        if(db.btype) last.querySelector('.btype').value = db.btype;
-        if(db.bmult!==undefined) last.querySelector('.bmult').value = db.bmult;
-        if(db.bdur!==undefined) last.querySelector('.bdur').value = db.bdur;
-        updateBoostRow(last.id);
-      }
       saveState();
     }
   }catch(e){console.warn('loadState failed',e)}
