@@ -106,10 +106,20 @@ select { -webkit-appearance: menulist; appearance: menulist; }
   label{min-width:unset;width:100%;margin-bottom:6px}
   .entry{flex-direction:column;align-items:stretch;padding:14px}
   .entry .tag{min-width:unset}
-  input,select,button{width:100%}
+  input,select{width:100%}
+  button{width:auto}
   input.txt, input[type=text], input[type=number]{width:100%}
   .suf-select{width:100%}
-  button.ghost{width:100%}
+  button.ghost,.mainbtn{width:100%}
+  .row-main{flex-wrap:wrap;gap:8px}
+  .row-main .gain-preview{margin-left:0;width:100%;text-align:left}
+  .row-main .tool-btn,.row-main .del{width:auto;align-self:flex-start}
+  .settings-panel > div{flex-direction:column;align-items:stretch;gap:10px}
+  .settings-panel .mode-auto,.settings-panel .mode-manual{flex-direction:column;align-items:stretch;width:100%}
+  .settings-panel .mode-auto .suf-select,.settings-panel .mode-manual .suf-select{margin-left:0;width:100%}
+  .settings-panel .mult-toggle{width:fit-content}
+  .settings-panel > div:last-child > div{width:100%;margin-left:0;flex-direction:column;align-items:stretch;gap:10px}
+  .settings-panel > div:last-child label{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;min-width:0}
   .mainbtn{padding:14px}
   .statfinal{flex-direction:column;align-items:flex-start;gap:8px}
   .big{font-size:24px}
