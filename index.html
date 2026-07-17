@@ -23,8 +23,8 @@
   --glass-2: rgba(255,255,255,0.02);
 }
 *{box-sizing:border-box}
-html{background:var(--bg)}
-body{font-family:Inter, 'Segoe UI', Arial, sans-serif;background:radial-gradient(1200px 600px at 10% 10%, rgba(106,140,255,.06), transparent 18%), radial-gradient(800px 400px at 90% 5%, rgba(90,130,255,.04), transparent 12%), var(--bg);color:var(--text);width:100%;max-width:1100px;margin:0 auto;padding:36px 22px 80px;position:relative;min-height:100vh;}
+html{background:var(--bg);overflow-x:hidden}
+body{font-family:Inter, 'Segoe UI', Arial, sans-serif;background:radial-gradient(1200px 600px at 10% 10%, rgba(106,140,255,.06), transparent 18%), radial-gradient(800px 400px at 90% 5%, rgba(90,130,255,.04), transparent 12%), var(--bg);color:var(--text);width:100%;max-width:1100px;margin:0 auto;padding:36px 22px 80px;position:relative;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%, rgba(123,156,255,.10), transparent 22%), radial-gradient(circle at 80% 10%, rgba(104,182,255,.06), transparent 18%);pointer-events:none;z-index:-1}
 h1{font-size:36px;font-weight:800;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
 .subtitle{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:16px;max-width:820px}
@@ -86,7 +86,7 @@ select.preset{width:180px}
 
 /* settings panel animation */
 .settings-panel{max-height:0;overflow:hidden;opacity:0;transition:max-height .28s ease,opacity .18s ease;padding-top:0}
-.settings-panel.open{max-height:420px;opacity:1;padding-top:10px}
+.settings-panel.open{max-height:520px;opacity:1;padding-top:10px;overflow-y:auto}
 
 /* themed native-looking select wrapper */
 /* Make native selects follow theme color (dropdown rendering may vary by browser) */
@@ -120,6 +120,7 @@ select { -webkit-appearance: menulist; appearance: menulist; }
   .settings-panel .mult-toggle{width:fit-content}
   .settings-panel > div:last-child > div{width:100%;margin-left:0;flex-direction:column;align-items:stretch;gap:10px}
   .settings-panel > div:last-child label{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;min-width:0}
+  .settings-panel.open{max-height:70vh;padding-bottom:8px}
   .mainbtn{padding:14px}
   .statfinal{flex-direction:column;align-items:flex-start;gap:8px}
   .big{font-size:24px}
@@ -132,39 +133,39 @@ select { -webkit-appearance: menulist; appearance: menulist; }
 </head>
 <body>
 
-<h1>Calculateur de temps de farm</h1>
-<p class="subtitle">Valeurs acceptées avec suffixes : K M B T Qd Qn Sx Sp Oc No Dc (ex : 10qd = 10e15, 2.5Sx = 2.5e21)</p>
+<h1>Farm time calculator</h1>
+<p class="subtitle">Accepted values with suffixes: K M B T Qd Qn Sx Sp Oc No Dc (example: 10qd = 10e15, 2.5Sx = 2.5e21)</p>
 
 <div class="top-toolbar">
   <!-- toolbar simplified: refresh presets removed -->
 </div>
 
 <div class="card stats-card">
-<h2>📊 Stats farmées</h2>
-<p class="smallnote">Chaque stat a son propre tick (durée en sec entre 2 gains) — mets la valeur observée en jeu pour la combo actuelle.</p>
+<h2>📊 Farmed stats</h2>
+<p class="smallnote">Each stat has its own tick (seconds between two gains) — enter the value observed in game for the current combo.</p>
 <div id="statsList"></div>
-<button class="ghost" onclick="addStatRow()">+ Ajouter une stat</button>
+<button class="ghost" onclick="addStatRow()">+ Add a stat</button>
 </div>
 
 <div class="card">
-<h2>⚡ Boosts temporaires</h2>
+<h2>⚡ Temporary boosts</h2>
 <div id="boostsList"></div>
-<button class="ghost" onclick="addBoostRow()">+ Ajouter un boost</button>
+<button class="ghost" onclick="addBoostRow()">+ Add a boost</button>
 </div>
 
 <div class="card">
 <h2>🧙 Champion</h2>
-<p class="smallnote">Le champion applique des assists toutes les 5 secondes. Créez des presets de champion (pourcentages par stat), puis appliquez un preset à une stat.</p>
+<p class="smallnote">The champion applies assists every 5 seconds. Create champion presets (percentages per stat), then apply a preset to a stat.</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
-  <button class="ghost" onclick="showAddPreset()">+ Nouveau preset</button>
+  <button class="ghost" onclick="showAddPreset()">+ New preset</button>
 </div>
 <div id="presetsList"></div>
-<h3 style="margin-top:12px;font-size:14px;color:var(--muted)">Appliquer un preset à une stat</h3>
+<h3 style="margin-top:12px;font-size:14px;color:var(--muted)">Apply a preset to a stat</h3>
 <div id="champList"></div>
-<button class="ghost" onclick="addChampRow()">+ Appliquer preset sur une stat</button>
+<button class="ghost" onclick="addChampRow()">+ Apply preset to a stat</button>
 </div>
 
-<button class="mainbtn" onclick="calculer()">Calculer le temps</button>
+<button class="mainbtn" onclick="calculer()">Calculate time</button>
 
 <div class="card" id="result"></div>
 
@@ -175,16 +176,16 @@ const SUF=[["",1],["K",1e3],["M",1e6],["B",1e9],["T",1e12],["Qd",1e15],["Qn",1e1
 // Zone multipliers
 const ZONES_COMMON = ["x2","x5","x15","x50","x100","x500","x1k","x3k","x7k","x15k","x45k","x200k","x500k","x2m","x5m"];
 const ZONES_AGI = ["x5","x15"];
-const ZONES_SWORD = ["x1","x2","x5","x15","x50","x200","x1000","x2500","x6000","x12000","x36000","x140000","x350000","x1400000","x3500000"];
+const ZONES_SWORD = ["x1","x2","x5","x15","x50","x200","x1k","x2.5k","x6k","x12k","x36k","x140k","x350k","x1.4m","x3.5m"];
 
 function zoneKeyToMultiplier(key){
   if(!key) return 1;
-  // remove leading x and possible k/m suffix
-  let s=key.toLowerCase().replace(/^x/,'');
-  // handle k,m
-  s=s.replace(/k/g,'000');
-  s=s.replace(/m/g,'000000');
-  return parseFloat(s)||1;
+  let s=(key+"").trim().toLowerCase().replace(/^x/,'');
+  let m=s.match(/^(-?(?:\d+|\d*\.\d+))(k|m|b|t)?$/);
+  if(!m) return parseFloat(s)||1;
+  let value=parseFloat(m[1]);
+  let scale={"":1,k:1e3,m:1e6,b:1e9,t:1e12};
+  return value * (scale[m[2]]||1);
 }
 
 function parseNum(s){
@@ -246,7 +247,7 @@ function addStatRow(primary=false){
   div.className = "entry"; div.id = id;
   div.innerHTML = `
     <div class="row-main" style="width:100%;display:flex;align-items:center;gap:10px">
-      <input type="checkbox" class="primaryChk" value="${id}" ${primary?"checked":""} title="Sélection multiple">
+      <input type="checkbox" class="primaryChk" value="${id}" ${primary?"checked":""} title="Multiple selection">
       <select class="sname">${statOptions(STAT_NAMES[(statCount-1)%6])}</select>
       <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
         <div class="gain-preview" style="margin:0 8px 0 0">Gain/tick: <strong class="gainTickVal">—</strong></div>
@@ -397,7 +398,7 @@ function addChampRow(){
   div.innerHTML=`
     <select class="presetSelect">${renderPresetOptions()}</select>
     <select class="cname">${statOptions(STAT_NAMES[(champCount-1)%6])}</select>
-    <span class="tag">(appliquera le % du preset)</span>
+    <span class="tag">(will apply the preset %)</span>
     <button class="ghost" style="width:auto;padding:6px 10px" onclick="applyPresetPreview('${id}')">Aperçu</button>
     <button class="del" onclick="{document.getElementById('${id}').remove(); saveStateDebounced();}">✕</button>`;
   document.getElementById("champList").appendChild(div);
@@ -415,13 +416,13 @@ function showAddPreset(){
   if(document.getElementById(id)) return;
   let div=document.createElement('div'); div.id=id; div.className='card';
   let fields=STAT_NAMES.map(s=>`<label style="width:100%">${s}: <input type=number class="newpreset_${s}" value="0" step="0.1" style="width:100px;margin-left:8px"> %</label>`).join('');
-  div.innerHTML=`<h3>Nouveau preset</h3><div style="display:flex;gap:8px;margin-bottom:8px"><input placeholder="Nom du preset" id="newPresetName" style="flex:1;padding:6px"><button class="ghost" onclick="saveNewPreset()">Enregistrer</button><button class="ghost" onclick="document.getElementById('${id}').remove()">Annuler</button></div>${fields}`;
+  div.innerHTML=`<h3>New preset</h3><div style="display:flex;gap:8px;margin-bottom:8px"><input placeholder="Preset name" id="newPresetName" style="flex:1;padding:6px"><button class="ghost" onclick="saveNewPreset()">Save</button><button class="ghost" onclick="document.getElementById('${id}').remove()">Cancel</button></div>${fields}`;
   document.getElementById('presetsList').appendChild(div);
 }
 
 function saveNewPreset(){
   let name=document.getElementById('newPresetName').value.trim();
-  if(!name){ alert('Donne un nom au preset'); return; }
+  if(!name){ alert('Give the preset a name'); return; }
   let pct={};
   for(const s of STAT_NAMES){ pct[s]= (parseFloat(document.querySelector('.newpreset_'+s).value)||0)/100; }
   // replace if exists
@@ -454,12 +455,12 @@ function editPreset(name){
   let id='presetForm'; let existing=document.getElementById(id); if(existing) existing.remove();
   let div=document.createElement('div'); div.id=id; div.className='card';
   let fields=STAT_NAMES.map(s=>`<label style="width:100%">${s}: <input type=number class="editpreset_${s}" value="${(p.pct[s]*100).toFixed(2)}" step="0.1" style="width:100px;margin-left:8px"> %</label>`).join('');
-  div.innerHTML=`<h3>Editer preset</h3><div style="display:flex;gap:8px;margin-bottom:8px"><input id="editPresetName" value="${p.name}" style="flex:1;padding:6px"><button class="ghost" onclick="saveEditedPreset('${p.name}')">Enregistrer</button><button class="ghost" onclick="document.getElementById('${id}').remove()">Annuler</button></div>${fields}`;
+  div.innerHTML=`<h3>Edit preset</h3><div style="display:flex;gap:8px;margin-bottom:8px"><input id="editPresetName" value="${p.name}" style="flex:1;padding:6px"><button class="ghost" onclick="saveEditedPreset('${p.name}')">Save</button><button class="ghost" onclick="document.getElementById('${id}').remove()">Cancel</button></div>${fields}`;
   document.getElementById('presetsList').appendChild(div);
 }
 
 function saveEditedPreset(oldName){
-  let newName=document.getElementById('editPresetName').value.trim(); if(!newName){ alert('Nom requis'); return; }
+  let newName=document.getElementById('editPresetName').value.trim(); if(!newName){ alert('Name required'); return; }
   let pct={}; for(const s of STAT_NAMES) pct[s]=(parseFloat(document.querySelector('.editpreset_'+s).value)||0)/100;
   let idx=champPresets.findIndex(p=>p.name===oldName);
   if(idx>=0) champPresets[idx]={name:newName,pct};
@@ -474,7 +475,7 @@ function saveEditedPreset(oldName){
 }
 
 function deletePreset(name){
-  if(!confirm('Supprimer le preset "'+name+'" ?')) return;
+  if(!confirm('Delete preset "'+name+'" ?')) return;
   champPresets=champPresets.filter(p=>p.name!==name);
   document.querySelectorAll('.presetSelect').forEach(sel=>{ sel.innerHTML=renderPresetOptions(sel.value);} );
   renderPresets();
@@ -486,7 +487,7 @@ function applyPresetPreview(entryId){
   let presetName=div.querySelector('.presetSelect').value; let stat=div.querySelector('.cname').value;
   let p=champPresets.find(x=>x.name===presetName);
   let pct=(p && p.pct[stat])? (p.pct[stat]*100).toFixed(2) : '0.00';
-  alert(`Preset ${presetName} => ${stat}: ${pct}% (appliqué toutes les 5s)`);
+  alert(`Preset ${presetName} => ${stat}: ${pct}% (applied every 5s)`);
 }
 
 let saveTimer=null;
@@ -702,7 +703,7 @@ function calculer(){
   });
 
   let selectedIds = Array.from(document.querySelectorAll('.primaryChk:checked')).map(c=>c.value);
-  if(selectedIds.length===0){ alert("Sélectionne au moins une stat cible (case à cocher)."); return; }
+  if(selectedIds.length===0){ alert("Select at least one target stat (checkbox)."); return; }
 
   function multAt(t){
     let m=1;
@@ -742,19 +743,19 @@ function calculer(){
     return finalTime;
   }
 
-  if(selectedIds.length===0){ alert("Sélectionne au moins une stat cible (cases)."); return; }
+  if(selectedIds.length===0){ alert("Select at least one target stat (checkboxes)."); return; }
 
   if(selectedIds.length===1){
     let primary = stats.find(s=>s.id===selectedIds[0]);
-    if(!primary || primary.gain<=0){ alert("La stat cible doit avoir un gain/tick > 0."); return; }
+    if(!primary || primary.gain<=0){ alert("The target stat must have gain/tick > 0."); return; }
     let finalTime = computeTimeFor(primary);
     if(finalTime===null){
       document.getElementById("result").style.display="block";
-      document.getElementById("result").innerHTML="<div class='big' style='color:var(--warn)'>Impossible d'atteindre l'objectif avec ces taux.</div>";
+      document.getElementById("result").innerHTML="<div class='big' style='color:var(--warn)'>Impossible to reach the target with these rates.</div>";
       return;
     }
     let detailsHTML=stats.map(s=>{
-      if(s.gain<=0) return `<div class="statfinal"><span>${s.name}</span><span>${fmtNum(s.cur)} (pas de gain)</span></div>`;
+      if(s.gain<=0) return `<div class="statfinal"><span>${s.name}</span><span>${fmtNum(s.cur)} (no gain)</span></div>`;
       let acc=s.cur, prev=0;
       for(const evt of events){
         let segEnd=Math.min(evt, finalTime);
@@ -790,10 +791,10 @@ function calculer(){
     document.getElementById("result").style.display="block";
     document.getElementById("result").innerHTML=`
       <div class="big">${fmtTime(finalTime)}</div>
-      <div style="display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap"><div class="hint">Durée totale: ${finalTime.toFixed(1)}s</div><div class="hint">Gain réel (cible): ${fmtNum(realGain)}</div><div class="hint">Multiplicateur final: x${finalMult.toFixed(3)}</div></div>
+      <div style="display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap"><div class="hint">Total duration: ${finalTime.toFixed(1)}s</div><div class="hint">Real gain (target): ${fmtNum(realGain)}</div><div class="hint">Final multiplier: x${finalMult.toFixed(3)}</div></div>
       <div style="margin-bottom:12px"><div style="height:12px;background:var(--border);border-radius:8px;overflow:hidden"><div id="progressBar" style="height:12px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%"></div></div><div id="timerText" class="hint" style="margin-top:6px">--</div></div>
       <div class="card" style="margin-bottom:0">
-        <h3 style="margin:6px 0">Temps détaillé & compteurs</h3>
+        <h3 style="margin:6px 0">Detailed time & counters</h3>
         <div style="font-size:13px">${detailsHTML}</div>
         <div style="font-size:13px;margin-top:10px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px">
           <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Ticks</span><span>${ticksInfo.map(t=>`${t.name}: ${t.ticks}`).join(' • ')}</span></div>
@@ -809,13 +810,13 @@ function calculer(){
   let listHTML = selectedIds.map(id=>{
     let s = stats.find(x=>x.id===id);
     if(!s) return '';
-    if(s.gain<=0) return `<div class="statfinal"><span>${s.name}</span><span>${fmtNum(s.cur)} (pas de gain)</span></div>`;
+    if(s.gain<=0) return `<div class="statfinal"><span>${s.name}</span><span>${fmtNum(s.cur)} (no gain)</span></div>`;
     let ft = computeTimeFor(s);
     if(ft===null) return `<div class="statfinal"><span>${s.name}</span><span style="color:var(--warn)">Impossible</span></div>`;
     return `<div class="statfinal"><span>${s.name}</span><span style="font-weight:700;color:var(--good)">${fmtTime(ft)}</span></div>`;
   }).join('');
   document.getElementById("result").style.display="block";
-  document.getElementById("result").innerHTML = `<div class="big">Sélection multiple</div><div class="card"><h3 style="margin:6px 0">Temps par cible</h3>${listHTML}</div>`;
+  document.getElementById("result").innerHTML = `<div class="big">Multiple selection</div><div class="card"><h3 style="margin:6px 0">Time per target</h3>${listHTML}</div>`;
 }
 
 // no persistence; the page stays purely local in the current session
